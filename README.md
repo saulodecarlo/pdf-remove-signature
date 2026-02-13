@@ -1,11 +1,10 @@
 # PDF Remove Signature — HTTP API (iText + AWS S3 + Docker)
 
-Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no **AWS S3**, usando **iText 8**, **Spring Boot 3** e **AWS SDK v2**.
+Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no **AWS S3**, usando **iText 9**, **Spring Boot 3** e **AWS SDK v2**.
 
 ## Estrutura do Projeto
 
 ```
-itext/
 ├── src/main/java/com/pdftools/
 │   ├── Application.java                  # Spring Boot main
 │   ├── config/
@@ -34,7 +33,7 @@ AWS_ACCESS_KEY_ID=your-access-key-id
 AWS_SECRET_ACCESS_KEY=your-secret-access-key
 AWS_S3_ENDPOINT=
 PRODUCTION=false
-SERVER_PORT=8080
+SERVER_PORT=8090
 ```
 
 > **PRODUCTION=true** → usa IAM Role (ignora access key / secret key). Ideal para EC2, ECS, EKS e Lambda.
@@ -49,7 +48,7 @@ docker compose up -d
 ### 3. Enviar requisição
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/remove-signature \
+curl -X POST http://localhost:8090/api/v1/remove-signature \
   -H "Content-Type: application/json" \
   -d '{
     "bucket": "meu-bucket",
@@ -78,7 +77,7 @@ O arquivo sem assinatura é salvo no **mesmo bucket**, dentro do sub-diretório 
 ### 4. Health check
 
 ```bash
-curl http://localhost:8080/actuator/health
+curl http://localhost:8090/actuator/health
 ```
 
 ## O que o serviço faz
@@ -100,7 +99,7 @@ curl http://localhost:8080/actuator/health
 | `AWS_SECRET_ACCESS_KEY` | Secret Key (ignorado se PRODUCTION=true) | — |
 | `AWS_S3_ENDPOINT` | Endpoint customizado (ex: LocalStack) | — |
 | `PRODUCTION` | `true` = usa IAM Role, `false` = usa static keys | `false` |
-| `SERVER_PORT` | Porta exposta do container | `8080` |
+| `SERVER_PORT` | Porta exposta do container | `8090` |
 
 ## Requisitos
 
@@ -116,13 +115,13 @@ java -jar target/pdf-remove-signature-1.0.0.jar
 
 ## Tecnologias
 
-- Java 17
-- Spring Boot 3.3.5
-- iText 8.0.5
+- Java 21
+- Spring Boot 4.0.2
+- iText 9.5.0
 - AWS SDK v2 (S3 + STS)
 - Docker (multi-stage build)
 
 ## Licença
 
-Este projeto está licenciado sob a **GNU Affero General Public License v3.0 (AGPL-3.0)** — veja o arquivo [LICENSE](LICENSE) para mais detalhes. O iText 8 é distribuído sob a AGPL, o que requer que qualquer software que o utilize e seja disponibilizado via rede também seja código aberto sob a mesma licença.
+Este projeto está licenciado sob a **GNU Affero General Public License v3.0 (AGPL-3.0)** — veja o arquivo [LICENSE](LICENSE) para mais detalhes. O iText 9 é distribuído sob a AGPL, o que requer que qualquer software que o utilize e seja disponibilizado via rede também seja código aberto sob a mesma licença.
 
