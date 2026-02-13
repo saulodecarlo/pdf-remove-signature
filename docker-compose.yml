@@ -1,0 +1,15 @@
+services:
+  pdf-remove-signature:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pdf-remove-signature
+    ports:
+      - "${SERVER_PORT:-8090}:8090"
+    environment:
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-}
+      - PRODUCTION=${PRODUCTION:-false}
+    restart: unless-stopped
