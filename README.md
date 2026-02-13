@@ -1,8 +1,9 @@
+````markdown
 # PDF Remove Signature — HTTP API (iText + AWS S3 + Docker)
 
-Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no **AWS S3**, usando **iText 9**, **Spring Boot 4** e **AWS SDK v2**.
+HTTP service to remove digital signatures from PDF files stored in **AWS S3**, using **iText 9**, **Spring Boot 4**, and **AWS SDK v2**.
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 ├── src/main/java/com/pdftools/
@@ -12,20 +13,20 @@ Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no *
 │   ├── controller/
 │   │   └── PdfController.java            # POST /api/v1/remove-signature
 │   └── service/
-│       ├── PdfSignatureService.java       # Lógica iText para remover assinaturas
-│       └── S3Service.java                 # Download/Upload S3
+│       ├── PdfSignatureService.java      # iText logic to remove signatures
+│       └── S3Service.java                # S3 download/upload
 ├── src/main/resources/
 │   └── application.yml
-├── .env                                   # Variáveis AWS + PRODUCTION
+├── .env                                   # AWS vars + PRODUCTION
 ├── Dockerfile                             # Multi-stage build
 ├── docker-compose.yml
 ├── pom.xml
 └── README.md
 ```
 
-## Como Usar
+## Usage
 
-### 1. Configure o `.env`
+### 1. Configure `.env`
 
 ```env
 AWS_REGION=us-east-1
@@ -36,43 +37,43 @@ PRODUCTION=false
 SERVER_PORT=8090
 ```
 
-> **PRODUCTION=true** → usa IAM Role (ignora access key / secret key). Ideal para EC2, ECS, EKS e Lambda.
+> **PRODUCTION=true** → use IAM Role (ignores access key / secret key). Suitable for EC2, ECS, EKS and Lambda.
 
-### 2. Build e start
+### 2. Build and start
 
 ```bash
 docker compose build
 docker compose up -d
 ```
 
-### 3. Enviar requisição
+### 3. Send request
 
 ```bash
 curl -X POST http://localhost:8090/api/v1/remove-signature \
   -H "Content-Type: application/json" \
   -d '{
-    "bucket": "meu-bucket",
-    "path": "docs/assinado.pdf"
+    "bucket": "my-bucket",
+    "path": "docs/signed.pdf"
   }'
 ```
 
-### Resposta
+### Response
 
 ```json
 {
-  "output": "docs/sem-certificado/assinado.pdf"
+  "output": "docs/unsigned/signed.pdf"
 }
 ```
 
-O arquivo sem assinatura é salvo no **mesmo bucket**, dentro do sub-diretório `sem-certificado/` relativo ao path original.
+The unsigned file is saved in the **same bucket**, under the `unsigned/` subdirectory relative to the original path.
 
-### Exemplos de path
+### Path examples
 
 | Input path | Output path |
 |---|---|
-| `assinado.pdf` | `sem-certificado/assinado.pdf` |
-| `docs/assinado.pdf` | `docs/sem-certificado/assinado.pdf` |
-| `empresa/2026/contrato.pdf` | `empresa/2026/sem-certificado/contrato.pdf` |
+| `signed.pdf` | `unsigned/signed.pdf` |
+| `docs/signed.pdf` | `docs/unsigned/signed.pdf` |
+| `company/2026/contract.pdf` | `company/2026/unsigned/contract.pdf` |
 
 ### 4. Health check
 
@@ -80,40 +81,40 @@ O arquivo sem assinatura é salvo no **mesmo bucket**, dentro do sub-diretório 
 curl http://localhost:8090/actuator/health
 ```
 
-## O que o serviço faz
+## What the service does
 
-1. **Recebe requisição HTTP** com `bucket` e `path`
-2. **Baixa o PDF** do S3
-3. **Remove campos de assinatura** do AcroForm
-4. **Remove anotações Widget** de assinatura de cada página
-5. **Limpa SigFlags** do AcroForm
-6. **Faz upload** do PDF limpo para `{path}/sem-certificado/{filename}` no mesmo bucket
-7. **Retorna o path** do arquivo de saída
+1. **Receives an HTTP request** with `bucket` and `path`
+2. **Downloads the PDF** from S3
+3. **Removes signature fields** from the AcroForm
+4. **Removes Widget annotations** related to signatures from each page
+5. **Clears SigFlags** from the AcroForm
+6. **Uploads** the cleaned PDF to `{path}/unsigned/{filename}` in the same bucket
+7. **Returns the output path**
 
-## Configuração AWS
+## AWS configuration
 
-| Variável | Descrição | Padrão |
+| Variable | Description | Default |
 |---|---|---|
-| `AWS_REGION` | Região AWS | `us-east-1` |
-| `AWS_ACCESS_KEY_ID` | Access Key (ignorado se PRODUCTION=true) | — |
-| `AWS_SECRET_ACCESS_KEY` | Secret Key (ignorado se PRODUCTION=true) | — |
-| `AWS_S3_ENDPOINT` | Endpoint customizado (ex: LocalStack) | — |
-| `PRODUCTION` | `true` = usa IAM Role, `false` = usa static keys | `false` |
-| `SERVER_PORT` | Porta exposta do container | `8090` |
+| `AWS_REGION` | AWS region | `us-east-1` |
+| `AWS_ACCESS_KEY_ID` | Access Key (ignored if PRODUCTION=true) | — |
+| `AWS_SECRET_ACCESS_KEY` | Secret Key (ignored if PRODUCTION=true) | — |
+| `AWS_S3_ENDPOINT` | Custom endpoint (e.g. LocalStack) | — |
+| `PRODUCTION` | `true` = use IAM Role, `false` = use static keys | `false` |
+| `SERVER_PORT` | Port exposed by the container | `8090` |
 
-## Requisitos
+## Requirements
 
 - Docker
 - Docker Compose
 
-## Build manual (sem Docker)
+## Manual build (without Docker)
 
 ```bash
 mvn clean package -DskipTests
 java -jar target/pdf-remove-signature-1.0.0.jar
 ```
 
-## Tecnologias
+## Technologies
 
 - Java 21
 - Spring Boot 4.0.2
@@ -121,7 +122,9 @@ java -jar target/pdf-remove-signature-1.0.0.jar
 - AWS SDK v2 (S3 + STS)
 - Docker (multi-stage build)
 
-## Licença
+## License
 
-Este projeto está licenciado sob a **GNU Affero General Public License v3.0 (AGPL-3.0)** — veja o arquivo [LICENSE](LICENSE) para mais detalhes. O iText 9 é distribuído sob a AGPL, o que requer que qualquer software que o utilize e seja disponibilizado via rede também seja código aberto sob a mesma licença.
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)** — see the [LICENSE](LICENSE) file for details. iText 9 is distributed under the AGPL, which requires that any software using it and made available over a network must also be open-sourced under the same license.
 
+
+````
