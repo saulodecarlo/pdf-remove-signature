@@ -1,6 +1,6 @@
 # PDF Remove Signature — HTTP API (iText + AWS S3 + Docker)
 
-Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no **AWS S3**, usando **iText 9**, **Spring Boot 3** e **AWS SDK v2**.
+Serviço HTTP para remover assinaturas digitais de arquivos PDF armazenados no **AWS S3**, usando **iText 9**, **Spring Boot 4** e **AWS SDK v2**.
 
 ## Estrutura do Projeto
 
